@@ -3,14 +3,16 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:2.3.0'
     }
 }
 
 allprojects {
     repositories {
-        mavenLocal()
         jcenter()
         mavenCentral()
+        maven {
+            url "${nexusUrl}/repository/maven-releases/"
+        }
     }
 }

@@ -21,6 +21,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.os.Build;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -203,6 +204,8 @@ public class CropOverlayView extends View {
      * Get the left/top/right/bottom coordinates of the crop window.
      */
     public RectF getCropWindowRect() {
+        //TODO provide the path instead
+
         return mCropWindowHandler.getRect();
     }
 
@@ -769,6 +772,25 @@ public class CropOverlayView extends View {
             if (mCropShape == CropImageView.CropShape.RECTANGLE) {
                 // Draw rectangle crop window border.
                 canvas.drawRect(rect, mBorderPaint);
+
+                VectorDrawableCompat drawableCompat = VectorDrawableCompat.create(
+                        getResources(),
+                        R.drawable.pic_vector,
+                        getContext().getTheme());
+
+
+                Rect container = new Rect();
+                rect.round(container);
+
+                drawableCompat.setBounds(container);
+                drawableCompat.draw(canvas);
+
+                Rect newRect = drawableCompat.getBounds();
+                canvas.drawRect(newRect, mBorderPaint);
+
+
+                Log.d(getClass().getName(), "DRAWING RECT: " + rect.toString());
+                Log.d(getClass().getName(), "DRAWING VECTOR: " + newRect.toString());
             } else {
                 // Draw circular crop window border
                 canvas.drawOval(rect, mBorderPaint);

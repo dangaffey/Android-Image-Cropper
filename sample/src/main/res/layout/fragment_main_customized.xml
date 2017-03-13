@@ -13,4 +13,8 @@
     app:cropGuidelines="on"
     app:cropGuidelinesColor="@android:color/holo_red_dark"
     app:cropInitialCropWindowPaddingRatio="0"
-    app:cropSnapRadius="0dp"/>
+    app:cropSnapRadius="0dp"
+    app:cropFixAspectRatio="true"
+    app:vectorDrawableRecticle="@drawable/pic_vector"
+    app:vectorDrawableTemplate="@drawable/pic_full_vector"
+/>

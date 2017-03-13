@@ -15,6 +15,12 @@ package com.theartofdev.edmodo.cropper.sample;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -25,7 +31,8 @@ import android.widget.Toast;
 
 import com.example.croppersample.R;
 
-public final class CropResultActivity extends Activity {
+public final class CropResultActivity extends Activity
+{
 
     /**
      * The image to show in the activity.
@@ -35,7 +42,8 @@ public final class CropResultActivity extends Activity {
     private ImageView imageView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_crop_result);
@@ -65,17 +73,20 @@ public final class CropResultActivity extends Activity {
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         releaseBitmap();
         super.onBackPressed();
     }
 
-    public void onImageViewClicked(View view) {
+    public void onImageViewClicked(View view)
+    {
         releaseBitmap();
         finish();
     }
 
-    private void releaseBitmap() {
+    private void releaseBitmap()
+    {
         if (mImage != null) {
             mImage.recycle();
             mImage = null;

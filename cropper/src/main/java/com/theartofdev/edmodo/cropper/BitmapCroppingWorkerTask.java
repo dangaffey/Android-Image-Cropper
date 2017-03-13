@@ -190,6 +190,7 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
                 }
 
                 Bitmap bitmap = BitmapUtils.resizeBitmap(bitmapSampled.bitmap, mReqWidth, mReqHeight, mReqSizeOptions);
+                bitmap = CropImage.toCustomBitmap(mContext, bitmap);
 
                 if (mSaveUri == null) {
                     return new Result(bitmap, bitmapSampled.sampleSize);

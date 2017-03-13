@@ -18,14 +18,20 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Outline;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Region;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -237,6 +243,8 @@ public class CropImageView extends FrameLayout {
                     options.minCropResultHeight = (int) ta.getFloat(R.styleable.CropImageView_cropMinCropResultHeightPX, options.minCropResultHeight);
                     options.maxCropResultWidth = (int) ta.getFloat(R.styleable.CropImageView_cropMaxCropResultWidthPX, options.maxCropResultWidth);
                     options.maxCropResultHeight = (int) ta.getFloat(R.styleable.CropImageView_cropMaxCropResultHeightPX, options.maxCropResultHeight);
+                    options.vectorDrawableReticle = ta.getInteger(R.styleable.CropImageView_vectorDrawableRecticle, options.vectorDrawableReticle);
+                    options.vectorDrawableTemplate = ta.getInteger(R.styleable.CropImageView_vectorDrawableTemplate, options.vectorDrawableTemplate);
 
                     // if aspect ratio is set then set fixed to true
                     if (ta.hasValue(R.styleable.CropImageView_cropAspectRatioX) &&
@@ -695,7 +703,7 @@ public class CropImageView extends FrameLayout {
      * @param saveUri the Android Uri to save the cropped image to
      */
     public void saveCroppedImageAsync(Uri saveUri) {
-        saveCroppedImageAsync(saveUri, Bitmap.CompressFormat.JPEG, 90, 0, 0, RequestSizeOptions.NONE);
+        saveCroppedImageAsync(saveUri, Bitmap.CompressFormat.PNG, 90, 0, 0, RequestSizeOptions.NONE);
     }
 
     /**

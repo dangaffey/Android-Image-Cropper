@@ -212,6 +212,8 @@ public final class MainFragment extends Fragment
             if (result.getUri() != null) {
                 intent.putExtra("URI", result.getUri());
             } else {
+
+               // CropResultActivity.mImage = CropImage.toCustomBitmap(getContext(), result.getBitmap());
                 CropResultActivity.mImage = mCropImageView.getCropShape() == CropImageView.CropShape.OVAL
                         ? CropImage.toOvalBitmap(result.getBitmap())
                         : result.getBitmap();

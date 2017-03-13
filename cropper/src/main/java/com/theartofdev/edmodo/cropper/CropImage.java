@@ -35,7 +35,9 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.InputStream;
@@ -126,6 +128,31 @@ public final class CropImage {
         bitmap.recycle();
 
         return output;
+    }
+
+
+    /**
+     * Create a new bitmap that superimposes the provided bitmap onto a template
+     *
+     * @param context
+     * @param bitmap
+     * @return
+     */
+    public static Bitmap toCustomBitmap(@NonNull Context context, @NonNull Bitmap bitmap)
+    {
+        Bitmap mask = BitmapUtils.getBitmapFromVectorDrawable(context, R.drawable.pic_full_vector);
+        mask = Bitmap.createScaledBitmap(mask, bitmap.getWidth(), bitmap.getHeight(), true);
+
+        Bitmap result = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),
+                Bitmap.Config.ARGB_8888);
+
+        Canvas mCanvas = new Canvas(result);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+        mCanvas.drawBitmap(bitmap, 0, 0, null);
+        mCanvas.drawBitmap(mask, 0, 0, paint);
+        paint.setXfermode(null);
+        return result;
     }
 
     /**
@@ -518,6 +545,23 @@ public final class CropImage {
             mOptions.scaleType = scaleType;
             return this;
         }
+
+
+        public ActivityBuilder setVectorDrawableRecticle(int drawableRecticle)
+        {
+            mOptions.vectorDrawableReticle = drawableRecticle;
+            return this;
+        }
+
+
+
+        public ActivityBuilder setVectorDrawableTemplate(int drawableTemplate)
+        {
+            mOptions.vectorDrawableTemplate = drawableTemplate;
+            return this;
+        }
+
+
 
         /**
          * if to show crop overlay UI what contains the crop window UI surrounded by background over the cropping

@@ -19,6 +19,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
@@ -120,6 +121,7 @@ public class CropImageOptions implements Parcelable {
 
     /**
      * the thickness of the guidelines lines in pixels. (in pixels)
+     *
      */
     public float borderLineThickness;
 
@@ -263,6 +265,19 @@ public class CropImageOptions implements Parcelable {
      */
     public int rotationDegrees;
 
+
+    /**
+     * int id of the vector drawable crop reticle
+     */
+    public int vectorDrawableReticle;
+
+
+    /**
+     * int id of the vector drawable template
+     */
+    public int vectorDrawableTemplate;
+
+
     /**
      * Init options with defaults.
      */
@@ -320,6 +335,8 @@ public class CropImageOptions implements Parcelable {
         allowRotation = true;
         allowCounterRotation = false;
         rotationDegrees = 90;
+        vectorDrawableReticle = -1;
+        vectorDrawableTemplate = -1;
     }
 
     /**
@@ -369,6 +386,8 @@ public class CropImageOptions implements Parcelable {
         allowRotation = in.readByte() != 0;
         allowCounterRotation = in.readByte() != 0;
         rotationDegrees = in.readInt();
+        vectorDrawableReticle = in.readInt();
+        vectorDrawableTemplate = in.readInt();
     }
 
     @Override
@@ -416,6 +435,8 @@ public class CropImageOptions implements Parcelable {
         dest.writeByte((byte) (allowRotation ? 1 : 0));
         dest.writeByte((byte) (allowCounterRotation ? 1 : 0));
         dest.writeInt(rotationDegrees);
+        dest.writeInt(vectorDrawableReticle);
+        dest.writeInt(vectorDrawableTemplate);
     }
 
     @Override
