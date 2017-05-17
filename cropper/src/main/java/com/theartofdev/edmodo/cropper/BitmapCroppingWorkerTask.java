@@ -22,7 +22,8 @@ import java.lang.ref.WeakReference;
 /**
  * Task to crop bitmap asynchronously from the UI thread.
  */
-final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppingWorkerTask.Result> {
+final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppingWorkerTask.Result>
+{
 
     //region: Fields and Consts
 
@@ -110,12 +111,17 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
      * the quality (if applicable) to use when writing the image (0 - 100)
      */
     private final int mSaveCompressQuality;
-    //endregion
+
+
+    private final CropImageView.CropShape cropShape;
+
 
     BitmapCroppingWorkerTask(CropImageView cropImageView, Bitmap bitmap, float[] cropPoints,
                              int degreesRotated, boolean fixAspectRatio, int aspectRatioX, int aspectRatioY,
                              int reqWidth, int reqHeight, CropImageView.RequestSizeOptions options,
-                             Uri saveUri, Bitmap.CompressFormat saveCompressFormat, int saveCompressQuality) {
+                             Uri saveUri, Bitmap.CompressFormat saveCompressFormat, int saveCompressQuality,
+                             CropImageView.CropShape cropShape)
+    {
 
         mCropImageViewReference = new WeakReference<>(cropImageView);
         mContext = cropImageView.getContext();
@@ -134,13 +140,16 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
         mSaveCompressQuality = saveCompressQuality;
         mOrgWidth = 0;
         mOrgHeight = 0;
+        this.cropShape = cropShape;
     }
 
     BitmapCroppingWorkerTask(CropImageView cropImageView, Uri uri, float[] cropPoints,
                              int degreesRotated, int orgWidth, int orgHeight,
                              boolean fixAspectRatio, int aspectRatioX, int aspectRatioY,
                              int reqWidth, int reqHeight, CropImageView.RequestSizeOptions options,
-                             Uri saveUri, Bitmap.CompressFormat saveCompressFormat, int saveCompressQuality) {
+                             Uri saveUri, Bitmap.CompressFormat saveCompressFormat, int saveCompressQuality,
+                             CropImageView.CropShape cropShape)
+    {
 
         mCropImageViewReference = new WeakReference<>(cropImageView);
         mContext = cropImageView.getContext();
@@ -159,12 +168,14 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
         mSaveCompressFormat = saveCompressFormat;
         mSaveCompressQuality = saveCompressQuality;
         mBitmap = null;
+        this.cropShape = cropShape;
     }
 
     /**
      * The Android URI that this task is currently loading.
      */
-    public Uri getUri() {
+    public Uri getUri()
+    {
         return mUri;
     }
 
@@ -175,7 +186,8 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
      * @return the decoded bitmap data
      */
     @Override
-    protected BitmapCroppingWorkerTask.Result doInBackground(Void... params) {
+    protected BitmapCroppingWorkerTask.Result doInBackground(Void... params)
+    {
         try {
             if (!isCancelled()) {
 
@@ -190,7 +202,9 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
                 }
 
                 Bitmap bitmap = BitmapUtils.resizeBitmap(bitmapSampled.bitmap, mReqWidth, mReqHeight, mReqSizeOptions);
-                bitmap = CropImage.toCustomBitmap(mContext, bitmap);
+                bitmap = (cropShape == CropImageView.CropShape.OVAL)
+                        ? CropImage.toOvalBitmap(bitmap)
+                        : CropImage.toCustomBitmap(mContext, bitmap);
 
                 if (mSaveUri == null) {
                     return new Result(bitmap, bitmapSampled.sampleSize);
@@ -214,7 +228,8 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
      * @param result the result of bitmap cropping
      */
     @Override
-    protected void onPostExecute(Result result) {
+    protected void onPostExecute(Result result)
+    {
         if (result != null) {
             boolean completeCalled = false;
             if (!isCancelled()) {
@@ -236,7 +251,8 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
     /**
      * The result of BitmapCroppingWorkerTask async loading.
      */
-    static final class Result {
+    static final class Result
+    {
 
         /**
          * The cropped bitmap
@@ -263,7 +279,8 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
          */
         final int sampleSize;
 
-        Result(Bitmap bitmap, int sampleSize) {
+        Result(Bitmap bitmap, int sampleSize)
+        {
             this.bitmap = bitmap;
             this.uri = null;
             this.error = null;
@@ -271,7 +288,8 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
             this.sampleSize = sampleSize;
         }
 
-        Result(Uri uri, int sampleSize) {
+        Result(Uri uri, int sampleSize)
+        {
             this.bitmap = null;
             this.uri = uri;
             this.error = null;
@@ -279,7 +297,8 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
             this.sampleSize = sampleSize;
         }
 
-        Result(Exception error, boolean isSave) {
+        Result(Exception error, boolean isSave)
+        {
             this.bitmap = null;
             this.uri = null;
             this.error = error;

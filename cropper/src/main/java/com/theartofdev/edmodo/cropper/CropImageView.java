@@ -95,6 +95,7 @@ public class CropImageView extends FrameLayout {
 
     private int mImageResource;
 
+
     /**
      * The initial scale type of the image in the crop image view
      */
@@ -1091,12 +1092,12 @@ public class CropImageView extends FrameLayout {
                         mDegreesRotated, orgWidth, orgHeight,
                         mCropOverlayView.isFixAspectRatio(), mCropOverlayView.getAspectRatioX(), mCropOverlayView.getAspectRatioY(),
                         reqWidth, reqHeight, options,
-                        saveUri, saveCompressFormat, saveCompressQuality));
+                        saveUri, saveCompressFormat, saveCompressQuality, getCropShape()));
             } else {
                 mBitmapCroppingWorkerTask = new WeakReference<>(new BitmapCroppingWorkerTask(this, mBitmap, getCropPoints(), mDegreesRotated,
                         mCropOverlayView.isFixAspectRatio(), mCropOverlayView.getAspectRatioX(), mCropOverlayView.getAspectRatioY(),
                         reqWidth, reqHeight, options,
-                        saveUri, saveCompressFormat, saveCompressQuality));
+                        saveUri, saveCompressFormat, saveCompressQuality, getCropShape()));
             }
             mBitmapCroppingWorkerTask.get().execute();
             setProgressBarVisibility();
