@@ -10,7 +10,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
-        versionName "2.4.3"
+        versionName "2.4.6"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -34,7 +34,7 @@ uploadArchives {
 
             pom.groupId	= "com.wolfe"
             pom.artifactId = "cropper"
-            pom.version	= "2.4.4"
+            pom.version	= "2.4.6"
             pom.packaging = "aar"
         }
     }
