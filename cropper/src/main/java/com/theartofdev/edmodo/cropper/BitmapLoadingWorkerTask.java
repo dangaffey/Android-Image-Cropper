@@ -40,7 +40,7 @@ final class BitmapLoadingWorkerTask extends AsyncTask<Void, Void, BitmapLoadingW
     /**
      * The context of the crop image view widget used for loading of bitmap by Android URI
      */
-    private final Context mContext;
+    private final WeakReference<Context> mContextRef;
 
     /**
      * required width of the cropping image after density adjustment
@@ -57,7 +57,7 @@ final class BitmapLoadingWorkerTask extends AsyncTask<Void, Void, BitmapLoadingW
         mUri = uri;
         mCropImageViewReference = new WeakReference<>(cropImageView);
 
-        mContext = cropImageView.getContext();
+        mContextRef = new WeakReference<>(cropImageView.getContext());
 
         DisplayMetrics metrics = cropImageView.getResources().getDisplayMetrics();
         double densityAdj = metrics.density > 1 ? 1 / metrics.density : 1;
@@ -81,15 +81,18 @@ final class BitmapLoadingWorkerTask extends AsyncTask<Void, Void, BitmapLoadingW
     @Override
     protected Result doInBackground(Void... params) {
         try {
+
+            Context context = mContextRef.get();
+
             if (!isCancelled()) {
 
                 BitmapUtils.BitmapSampled decodeResult =
-                        BitmapUtils.decodeSampledBitmap(mContext, mUri, mWidth, mHeight);
+                        BitmapUtils.decodeSampledBitmap(context, mUri, mWidth, mHeight);
 
                 if (!isCancelled()) {
 
                     BitmapUtils.RotateBitmapResult rotateResult =
-                            BitmapUtils.rotateBitmapByExif(decodeResult.bitmap, mContext, mUri);
+                            BitmapUtils.rotateBitmapByExif(decodeResult.bitmap, context, mUri);
 
                     return new Result(mUri, rotateResult.bitmap, decodeResult.sampleSize, rotateResult.degrees);
                 }

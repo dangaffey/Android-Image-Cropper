@@ -45,7 +45,7 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
     /**
      * The context of the crop image view widget used for loading of bitmap by Android URI
      */
-    private final Context mContext;
+    private final WeakReference<Context> mContextRef;
 
     /**
      * Required cropping 4 points (x0,y0,x1,y1,x2,y2,x3,y3)
@@ -124,7 +124,7 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
     {
 
         mCropImageViewReference = new WeakReference<>(cropImageView);
-        mContext = cropImageView.getContext();
+        mContextRef = new WeakReference<>(cropImageView.getContext());
         mBitmap = bitmap;
         mCropPoints = cropPoints;
         mUri = null;
@@ -152,7 +152,7 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
     {
 
         mCropImageViewReference = new WeakReference<>(cropImageView);
-        mContext = cropImageView.getContext();
+        mContextRef = new WeakReference<>(cropImageView.getContext());
         mUri = uri;
         mCropPoints = cropPoints;
         mDegreesRotated = degreesRotated;
@@ -189,11 +189,13 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
     protected BitmapCroppingWorkerTask.Result doInBackground(Void... params)
     {
         try {
+            Context context = mContextRef.get();
+
             if (!isCancelled()) {
 
                 BitmapUtils.BitmapSampled bitmapSampled;
                 if (mUri != null) {
-                    bitmapSampled = BitmapUtils.cropBitmap(mContext, mUri, mCropPoints, mDegreesRotated, mOrgWidth, mOrgHeight,
+                    bitmapSampled = BitmapUtils.cropBitmap(context, mUri, mCropPoints, mDegreesRotated, mOrgWidth, mOrgHeight,
                             mFixAspectRatio, mAspectRatioX, mAspectRatioY, mReqWidth, mReqHeight);
                 } else if (mBitmap != null) {
                     bitmapSampled = BitmapUtils.cropBitmapObjectHandleOOM(mBitmap, mCropPoints, mDegreesRotated, mFixAspectRatio, mAspectRatioX, mAspectRatioY);
@@ -204,15 +206,13 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
                 Bitmap bitmap = BitmapUtils.resizeBitmap(bitmapSampled.bitmap, mReqWidth, mReqHeight, mReqSizeOptions);
                 bitmap = (cropShape == CropImageView.CropShape.OVAL)
                         ? CropImage.toOvalBitmap(bitmap)
-                        : CropImage.toCustomBitmap(mContext, bitmap);
+                        : CropImage.toCustomBitmap(context, bitmap);
 
                 if (mSaveUri == null) {
                     return new Result(bitmap, bitmapSampled.sampleSize);
                 } else {
-                    BitmapUtils.writeBitmapToUri(mContext, bitmap, mSaveUri, mSaveCompressFormat, mSaveCompressQuality);
-                    if (bitmap != null) {
-                        bitmap.recycle();
-                    }
+                    BitmapUtils.writeBitmapToUri(context, bitmap, mSaveUri, mSaveCompressFormat, mSaveCompressQuality);
+                    bitmap.recycle();
                     return new Result(mSaveUri, bitmapSampled.sampleSize);
                 }
             }

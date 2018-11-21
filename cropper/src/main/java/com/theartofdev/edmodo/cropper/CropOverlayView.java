@@ -12,6 +12,7 @@
 
 package com.theartofdev.edmodo.cropper;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -146,12 +147,12 @@ public class CropOverlayView extends View {
     /**
      * save the current aspect ratio of the image
      */
-    private int mAspectRatioX;
+    private int mAspectRatioX = 1;
 
     /**
      * save the current aspect ratio of the image
      */
-    private int mAspectRatioY;
+    private int mAspectRatioY = 1;
 
     /**
      * The aspect ratio that the crop area should maintain;
@@ -273,21 +274,6 @@ public class CropOverlayView extends View {
     public void setCropShape(CropImageView.CropShape cropShape) {
         if (mCropShape != cropShape) {
             mCropShape = cropShape;
-            if (Build.VERSION.SDK_INT >= 11 && Build.VERSION.SDK_INT <= 17) {
-                if (mCropShape == CropImageView.CropShape.OVAL) {
-                    mOriginalLayerType = getLayerType();
-                    if (mOriginalLayerType != View.LAYER_TYPE_SOFTWARE) {
-                        // TURN off hardware acceleration
-                        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    } else {
-                        mOriginalLayerType = null;
-                    }
-                } else if (mOriginalLayerType != null) {
-                    // return hardware acceleration back
-                    setLayerType(mOriginalLayerType, null);
-                    mOriginalLayerType = null;
-                }
-            }
             invalidate();
         }
     }
@@ -395,7 +381,7 @@ public class CropOverlayView extends View {
      * Set multi touch functionality to enabled/disabled.
      */
     public boolean setMultiTouchEnabled(boolean multiTouchEnabled) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && mMultiTouchEnabled != multiTouchEnabled) {
+        if (mMultiTouchEnabled != multiTouchEnabled) {
             mMultiTouchEnabled = multiTouchEnabled;
             if (mMultiTouchEnabled && mScaleDetector == null) {
                 mScaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
@@ -679,7 +665,7 @@ public class CropOverlayView extends View {
         float bottom = Math.min(BitmapUtils.getRectBottom(mBoundsPoints), getHeight());
 
         if (mCropShape == CropImageView.CropShape.RECTANGLE) {
-            if (!isNonStraightAngleRotated() || Build.VERSION.SDK_INT <= 17) {
+            if (!isNonStraightAngleRotated()) {
                 canvas.drawRect(left, top, right, rect.top, mBackgroundPaint);
                 canvas.drawRect(left, rect.bottom, right, bottom, mBackgroundPaint);
                 canvas.drawRect(left, rect.top, rect.left, rect.bottom, mBackgroundPaint);
@@ -693,21 +679,30 @@ public class CropOverlayView extends View {
                 mPath.close();
 
                 canvas.save();
-                canvas.clipPath(mPath, Region.Op.INTERSECT);
-                canvas.clipRect(rect, Region.Op.XOR);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    canvas.clipOutPath(mPath);
+                    canvas.clipOutRect(rect);
+                } else {
+                    canvas.clipPath(mPath, Region.Op.INTERSECT);
+                    canvas.clipRect(rect, Region.Op.XOR);
+                }
+
                 canvas.drawRect(left, top, right, bottom, mBackgroundPaint);
                 canvas.restore();
             }
         } else {
             mPath.reset();
-            if (Build.VERSION.SDK_INT >= 11 && Build.VERSION.SDK_INT <= 17 && mCropShape == CropImageView.CropShape.OVAL) {
-                mDrawRect.set(rect.left + 2, rect.top + 2, rect.right - 2, rect.bottom - 2);
-            } else {
-                mDrawRect.set(rect.left, rect.top, rect.right, rect.bottom);
-            }
+            mDrawRect.set(rect.left, rect.top, rect.right, rect.bottom);
             mPath.addOval(mDrawRect, Path.Direction.CW);
             canvas.save();
-            canvas.clipPath(mPath, Region.Op.XOR);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                canvas.clipOutPath(mPath);
+            } else {
+                canvas.clipPath(mPath, Region.Op.XOR);
+            }
+
             canvas.drawRect(left, top, right, bottom, mBackgroundPaint);
             canvas.restore();
         }
@@ -782,15 +777,19 @@ public class CropOverlayView extends View {
                 Rect container = new Rect();
                 rect.round(container);
 
-                drawableCompat.setBounds(container);
-                drawableCompat.draw(canvas);
+                if (drawableCompat != null) {
+                    drawableCompat.setBounds(container);
+                    drawableCompat.draw(canvas);
 
-                Rect newRect = drawableCompat.getBounds();
-                canvas.drawRect(newRect, mBorderPaint);
+                    Rect newRect = drawableCompat.getBounds();
+                    canvas.drawRect(newRect, mBorderPaint);
+                    Log.d(getClass().getName(), "DRAWING RECT: " + rect.toString());
+                    Log.d(getClass().getName(), "DRAWING VECTOR: " + newRect.toString());
+                    return;
+                }
 
+                Log.d(getClass().getName(), "ERROR: DRAWING RECT WAS NULL");
 
-                Log.d(getClass().getName(), "DRAWING RECT: " + rect.toString());
-                Log.d(getClass().getName(), "DRAWING VECTOR: " + newRect.toString());
             } else {
                 // Draw circular crop window border
                 canvas.drawOval(rect, mBorderPaint);
