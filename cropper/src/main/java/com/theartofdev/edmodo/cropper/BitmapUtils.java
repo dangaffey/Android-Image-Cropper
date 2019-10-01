@@ -23,12 +23,11 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.support.media.ExifInterface;
+import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import android.util.Log;
 import android.util.Pair;
 

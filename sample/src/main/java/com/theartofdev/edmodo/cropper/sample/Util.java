@@ -5,9 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.AppCompatDrawableManager;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.appcompat.widget.AppCompatDrawableManager;
 
 /**
  * Created by dgaffey on 3/10/17.

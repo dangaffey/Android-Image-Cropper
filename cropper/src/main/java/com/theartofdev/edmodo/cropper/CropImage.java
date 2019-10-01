@@ -33,11 +33,10 @@ import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.graphics.drawable.VectorDrawableCompat;
-import android.support.v4.app.Fragment;
-import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+import androidx.fragment.app.Fragment;
 
 import java.io.File;
 import java.io.InputStream;

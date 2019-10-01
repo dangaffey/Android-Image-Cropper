@@ -19,7 +19,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.graphics.drawable.VectorDrawableCompat;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 

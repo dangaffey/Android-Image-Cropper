@@ -12,7 +12,6 @@
 
 package com.theartofdev.edmodo.cropper;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -20,9 +19,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Region;
 import android.os.Build;
-import android.support.graphics.drawable.VectorDrawableCompat;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -684,8 +682,8 @@ public class CropOverlayView extends View {
                     canvas.clipOutPath(mPath);
                     canvas.clipOutRect(rect);
                 } else {
-                    canvas.clipPath(mPath, Region.Op.INTERSECT);
-                    canvas.clipRect(rect, Region.Op.XOR);
+                    canvas.clipPath(mPath);
+                    canvas.clipRect(rect);
                 }
 
                 canvas.drawRect(left, top, right, bottom, mBackgroundPaint);
@@ -700,7 +698,7 @@ public class CropOverlayView extends View {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 canvas.clipOutPath(mPath);
             } else {
-                canvas.clipPath(mPath, Region.Op.XOR);
+                canvas.clipPath(mPath);
             }
 
             canvas.drawRect(left, top, right, bottom, mBackgroundPaint);
